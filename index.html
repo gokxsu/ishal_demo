@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATAK Erken Uyarı Sistemi Demo</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 400px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1a365d; font-size: 20px; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #718096; font-size: 13px; margin-top: 0; margin-bottom: 20px; }
+        label { font-weight: bold; font-size: 14px; display: block; margin-top: 15px; color: #2d3748; }
+        select, input[type="range"] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #cbd5e0; border-radius: 6px; box-sizing: border-box; }
+        .slider-value { text-align: right; font-size: 13px; color: #4a5568; font-weight: bold; margin-top: 5px; }
+        button { width: 100%; padding: 14px; background-color: #2b6cb0; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #2c5282; }
+        #result { margin-top: 25px; padding: 15px; border-radius: 8px; display: none; text-align: center; font-weight: bold; }
+        .risk-low { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .risk-medium { background-color: #feebc8; color: #7b341e; border: 1px solid #fbd38d; }
+        .risk-high { background-color: #fed7d7; color: #742a2a; border: 1px solid #feb2b2; }
+        .action-text { font-size: 13px; margin-top: 10px; font-weight: normal; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Ankara İshal Erken Uyarı Sistemi</h2>
+    <p class="subtitle">ATAK Projesi Makine Öğrenimi Karar Destek Arayüzü (Demo)</p>
+
+    <label for="district">İlçe Seçiniz:</label>
+    <select id="district">
+        <option value="cankaya">Çankaya</option>
+        <option value="yenimahalle">Yenimahalle</option>
+        <option value="sincan">Sincan</option>
+        <option value="golbasi">Gölbaşı</option>
+    </select>
+
+    <label for="month">Tahmin Ayı:</label>
+    <select id="month">
+        <option value="1">Ocak</option>
+        <option value="4">Nisan</option>
+        <option value="8" selected>Ağustos</option>
+        <option value="11">Kasım</option>
+    </select>
+
+    <label for="temp">Beklenen Ortalama Sıcaklık (°C):</label>
+    <input type="range" id="temp" min="-5" max="40" value="32" oninput="document.getElementById('tempVal').innerText = this.value + ' °C'">
+    <div class="slider-value" id="tempVal">32 °C</div>
+
+    <label for="humidity">Beklenen Ortalama Nem (%):</label>
+    <input type="range" id="humidity" min="10" max="90" value="45" oninput="document.getElementById('humVal').innerText = '% ' + this.value">
+    <div class="slider-value" id="humVal">% 45</div>
+
+    <button onclick="calculateRisk()">Salgın Riskini Hesapla</button>
+
+    <div id="result">
+        <span id="riskLevel" style="font-size: 18px;"></span><br>
+        <div class="action-text" id="actionText"></div>
+    </div>
+</div>
+
+<script>
+    function calculateRisk() {
+        // Kullanıcı girdilerini al
+        let district = document.getElementById('district').value;
+        let month = parseInt(document.getElementById('month').value);
+        let temp = parseInt(document.getElementById('temp').value);
+        let humidity = parseInt(document.getElementById('humidity').value);
+
+        // Basit Demo Algoritması (Gerçek ML modeli eğitimden sonra buraya entegre edilecektir)
+        let riskScore = 0;
+
+        // Sıcaklık etkisi (Sıcaklık arttıkça risk artar)
+        if (temp > 28) riskScore += 40;
+        else if (temp > 20) riskScore += 20;
+
+        // Ay etkisi (Yaz ayları yüksek riskli)
+        if (month === 8) riskScore += 30; 
+
+        // İlçe yoğunluk etkisi (Örn: Çankaya ve Yenimahalle yüksek nüfuslu)
+        if (district === 'cankaya' || district === 'yenimahalle') riskScore += 20;
+        else riskScore += 10;
+
+        // Sonuç kutusunu göster
+        let resultDiv = document.getElementById('result');
+        let riskLevelText = document.getElementById('riskLevel');
+        let actionText = document.getElementById('actionText');
+        
+        resultDiv.style.display = "block";
+        resultDiv.className = ""; // Sınıfları sıfırla
+
+        if (riskScore >= 70) {
+            resultDiv.classList.add("risk-high");
+            riskLevelText.innerHTML = "🔴 YÜKSEK RİSK (Salgın İhtimali: %85)";
+            actionText.innerHTML = "Aksiyon: İlgili bölgedeki hastanelerin acil servis triyaj alanlarında ek personel görevlendirilmesi ve yerel su/gıda denetimlerinin acilen sıkılaştırılması önerilir.";
+        } else if (riskScore >= 40) {
+            resultDiv.classList.add("risk-medium");
+            riskLevelText.innerHTML = "🟠 ORTA RİSK (Salgın İhtimali: %45)";
+            actionText.innerHTML = "Aksiyon: Vaka sayıları yakından takip edilmeli, rutin hazırlıklar gözden geçirilmelidir.";
+        } else {
+            resultDiv.classList.add("risk-low");
+            riskLevelText.innerHTML = "🟢 DÜŞÜK RİSK (Salgın İhtimali: %12)";
+            actionText.innerHTML = "Aksiyon: Olağandışı bir yoğunluk beklenmemektedir. Mevcut nöbet düzeni korunabilir.";
+        }
+    }
+</script>
+
+</body>
+</html>
