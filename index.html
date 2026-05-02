@@ -92,15 +92,15 @@
         if (riskScore >= 70) {
             resultDiv.classList.add("risk-high");
             riskLevelText.innerHTML = "🔴 YÜKSEK RİSK (Salgın İhtimali: %85)";
-            actionText.innerHTML = "Aksiyon: İlgili bölgedeki hastanelerin acil servis triyaj alanlarında ek personel görevlendirilmesi ve yerel su/gıda denetimlerinin acilen sıkılaştırılması önerilir.";
+            actionText.innerHTML = "Halka yönelik Bilgilendirmeler yapılmalı, ilgili bölgedeki hastanelerin acil servis triyaj alanlarında ek personel görevlendirilmesi gerekebilir, yerel su/gıda denetimlerinin acilen sıkılaştırılması önerilir.";
         } else if (riskScore >= 40) {
             resultDiv.classList.add("risk-medium");
             riskLevelText.innerHTML = "🟠 ORTA RİSK (Salgın İhtimali: %45)";
-            actionText.innerHTML = "Aksiyon: Vaka sayıları yakından takip edilmeli, rutin hazırlıklar gözden geçirilmelidir.";
+            actionText.innerHTML = "Vaka sayıları yakından takip edilmeli, rutin hazırlıklar gözden geçirilmelidir.";
         } else {
             resultDiv.classList.add("risk-low");
             riskLevelText.innerHTML = "🟢 DÜŞÜK RİSK (Salgın İhtimali: %12)";
-            actionText.innerHTML = "Aksiyon: Olağandışı bir yoğunluk beklenmemektedir. Mevcut nöbet düzeni korunabilir.";
+            actionText.innerHTML = "Olağandışı bir yoğunluk beklenmemektedir";
         }
     }
 </script>
